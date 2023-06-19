@@ -2,46 +2,152 @@
 
 Random rnd = new();
 
-BinaryHeap h1 = new(10);
-BinaryHeap h2 = new(10);
-for (int i = 0; i < 8; i++)
+int[] values = new int[1_00_000];
+
+int[] values2 = new int[10_000_000];
+
+for (int i = 0; i < values.Length; i++)
 {
-    int num = rnd.Next(0,100);
-    Console.WriteLine("insert:" + num.ToString());
-    h1.HeapInsert(num);
-    
-    Console.WriteLine(h1.ToString());
+    values[i] = rnd.Next(1, 10000);
 }
 
-//Console.WriteLine("\nextractmMax:" + h1.HeapExtractMinimum());
-Console.WriteLine(h1.ToString());
-
-for (int i = 0; i < 8; i++)
+for (int i = 0; i < values2.Length; i++)
 {
-    h2.HeapInsert(i);
+    values2[i] = rnd.Next(1, 10000);
 }
-Console.WriteLine(h2.ToString());
 
-Console.WriteLine(h1.HeapUnion(h2).ToString());
+BinaryHeap binaryHeap1 = new(values.Length);
+BinomialHeap binomialHeap1 = new();
+FibonacciHeap fibonacciHeap1 = new FibonacciHeap();
+BinaryHeap binaryHeap2 = new(values2.Length);
+BinomialHeap binomialHeap2 = new();
+FibonacciHeap fibonacciHeap2 = new FibonacciHeap();
 
-//h1.HeapInsert(15);
-//Console.WriteLine("\ninsert: 15");
-//Console.WriteLine("heapsize: " + h1.heapSize.ToString());
-//Console.WriteLine(h1.ToString());
+var watch = System.Diagnostics.Stopwatch.StartNew();
+for(int i = 0; i < values.Length; i++)
+{
+    binaryHeap1.HeapInsert(values[i]);
+}
+watch.Stop();
+Console.WriteLine($"Binary heap 1  insert {values.Length} items in: {watch.ElapsedMilliseconds} ms");
 
-//Console.WriteLine("\nextractmMax:" + h1.HeapExtractMaximum());
-//Console.WriteLine("heapsize: " + h1.heapSize.ToString());
-//Console.WriteLine(h1.ToString());
+watch.Restart();
+watch.Start();
+for (int i = 0; i < values.Length; i++)
+{
+    binomialHeap1.BinomialHeapInsert(values[i]);
+}
+watch.Stop();
+Console.WriteLine($"Binomial heap 1 insert {values.Length} items in: {watch.ElapsedMilliseconds} ms");
 
-//h1.HeapInsert(3);
-//Console.WriteLine("\ninsert: 3");
-//Console.WriteLine("heapsize: " + h1.heapSize.ToString());
-//Console.WriteLine(h1.ToString());
+watch.Restart();
+watch.Start();
+for (int i = 0; i < values.Length; i++)
+{
+    fibonacciHeap1.FibHeapInsert(values[i]);
+}
+watch.Stop();
+Console.WriteLine($"fibonacci heap 1 insert {values.Length} items in: {watch.ElapsedMilliseconds} ms\n");
 
-//Console.WriteLine("\nextractmMax:" + h1.HeapExtractMaximum());
-//Console.WriteLine("heapsize: " + h1.heapSize.ToString());
-//Console.WriteLine(h1.ToString());
+watch.Restart();
+watch.Start();
+for (int i = 0; i < values2.Length; i++)
+{
+    binaryHeap2.HeapInsert(values2[i]);
+}
+watch.Stop();
+Console.WriteLine($"Binary heap 2 insert {values2.Length} items in: {watch.ElapsedMilliseconds} ms");
+
+watch.Restart();
+watch.Start();
+for (int i = 0; i < values2.Length; i++)
+{
+    binomialHeap2.BinomialHeapInsert(values2[i]);
+}
+watch.Stop();
+Console.WriteLine($"Binomial heap 2 insert {values2.Length} items in: {watch.ElapsedMilliseconds} ms");
+
+watch.Restart();
+watch.Start();
+for (int i = 0; i < values2.Length; i++)
+{
+    fibonacciHeap2.FibHeapInsert(values2[i]);
+}
+watch.Stop();
+Console.WriteLine($"fibonacci heap 1 insert {values2.Length} items in: {watch.ElapsedMilliseconds} ms\n");
+
+watch.Restart();
+watch.Start();
+var binaryHeap3 = binaryHeap1.HeapUnion(binaryHeap2);
+watch.Stop();
+Console.WriteLine($"binaryHeap1 union binaryHeap2 in: {watch.ElapsedMilliseconds} ms");
+
+watch.Restart();
+watch.Start();
+var binomialHeap3 = binomialHeap1.BinomialHeapUnion(binomialHeap2);
+watch.Stop();
+Console.WriteLine($"binomialHeap1 union binomialHeap2 in: {watch.ElapsedMilliseconds} ms");
+
+watch.Restart();
+watch.Start();
+var fibonacciHeap3 = fibonacciHeap1.FibHeapUnion(fibonacciHeap2);
+watch.Stop();
+Console.WriteLine($"fibonacciHeap1 union fibonacciHeap1 in: {watch.ElapsedMilliseconds} ms\n");
+
+watch.Restart();
+watch.Start();
+for (int i = 0; i < values.Length; i++)
+{
+    binaryHeap3.HeapExtractMinimum();
+}
+watch.Stop();
+Console.WriteLine($"Binary heap 3 extracted {values.Length} items in: {watch.ElapsedMilliseconds} ms");
+
+watch.Restart();
+watch.Start();
+for (int i = 0; i < values.Length; i++)
+{
+    binomialHeap3.BinomialHeapExtractMinKey();
+}
+watch.Stop();
+Console.WriteLine($"binomial heap 3 extracted {values.Length} items in: {watch.ElapsedMilliseconds} ms");
+
+watch.Restart();
+watch.Start();
+for (int i = 0; i < values.Length; i++)
+{
+    fibonacciHeap3.FibHeapExtractMin();
+}
+watch.Stop();
+Console.WriteLine($"fibonacci heap 3 extracted {values.Length} items in: {watch.ElapsedMilliseconds} ms\n");
+
+watch.Restart();
+watch.Start();
+for (int i = 0; i < values2.Length; i++)
+{
+    binaryHeap3.HeapExtractMinimum();
+}
+watch.Stop();
+Console.WriteLine($"Binary heap 3 extracted {values2.Length} items in: {watch.ElapsedMilliseconds} ms");
+
+watch.Restart();
+watch.Start();
+for (int i = 0; i < values2.Length; i++)
+{
+    binomialHeap3.BinomialHeapExtractMinKey();
+}
+watch.Stop();
+Console.WriteLine($"binomial heap 3 extracted {values2.Length} items in: {watch.ElapsedMilliseconds} ms");
+
+watch.Restart();
+watch.Start();
+for (int i = 0; i < values2.Length; i++)
+{
+    fibonacciHeap3.FibHeapExtractMin();
+}
+watch.Stop();
+Console.WriteLine($"fibonacci heap 3 extracted {values2.Length} items in: {watch.ElapsedMilliseconds} ms\n");
 
 
-
+Console.WriteLine("END");
 Console.ReadLine();

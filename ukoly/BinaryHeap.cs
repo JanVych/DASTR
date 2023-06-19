@@ -71,7 +71,7 @@ namespace ukoly
 
             if (heap[keyIndex] < key)
             {
-                return;
+                throw new Exception("input key is bigger then target key");
             }
 
             heap[keyIndex] = key;
