@@ -1,30 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ukoly
+﻿namespace ukoly
 {
     public class FHNode
     {
-        public int key;
-        public FHNode? parent;
-        public FHNode left;
-        public FHNode right;
-        public FHNode? child;
-        public int degree;
-        public bool marked;
+        public int Key { get; set; }
+        public FHNode? Parent { get; set; }
+        public FHNode Left { get; set; }
+        public FHNode Right { get; set; }
+        public FHNode? Child { get; set; }
+        public int Degree { get; set; }
+        public bool Marked { get; set; }
 
         public FHNode(int key)
         {
-            this.key = key;
-            this.parent = null;
-            this.child = null;
-            this.left = this;
-            this.right = this;
-            this.degree = 0;
-            this.marked = false;
+            Key = key;
+            Parent = null;
+            Child = null;
+            Left = this;
+            Right = this;
+            Degree = 0;
+            Marked = false;
         }
     }
 }

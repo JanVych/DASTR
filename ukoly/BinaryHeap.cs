@@ -53,7 +53,7 @@ namespace ukoly
 
         public int? HeapExtractMinimum()
         {
-            if (heapSize > 1)
+            if (heapSize >= 1)
             {
                 int max = heap[0];
                 heap[0] = heap[heapSize - 1];

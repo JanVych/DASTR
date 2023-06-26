@@ -5,48 +5,47 @@ namespace ukoly
     //min-heap
     internal class BinomialHeap
     {
-        public BTNode? root;
-        public static BTNode? BinomialHeapMinimum(BinomialHeap heap)
+        public BHNode? Root { get; private set; } = null;
+        public  BHNode? BinomialHeapMinimum()
         {
-            BTNode? node = heap.root;
-            BTNode? minNode = null;
-            int min = int.MaxValue;
+            if (Root == null) {  return null; }
+            BHNode? node = Root;
+            BHNode? minNode = node;
 
             while (node != null) 
             {
-                if (node.key < min)
+                node = node.Sibling;
+                if (node != null && minNode.Key > node.Key)
                 {
-                    min = node.key;
                     minNode = node;
                 }
-                node = node.sibling;
             }
             return minNode;
         }
 
-        public static void BinomialLink(BTNode b1, BTNode b2)
+        public static void BinomialLink(BHNode node1, BHNode node2)
         {
-            b1.parent = b2;
-            b1.sibling = b2.child;
-            b2.child = b1;
-            b2.degree++;
+            node1.Parent = node2;
+            node1.Sibling = node2.Child;
+            node2.Child = node1;
+            node2.Degree++;
         }
-        public static BTNode? MinNodeDegree(BTNode? node1, BTNode? node2)
+        public static BHNode? MinNodeDegree(BHNode? node1, BHNode? node2)
         {
             if (node1 == null && node2 == null) return null;
-            if (node2 == null || (node1 != null && node1.degree < node2.degree))
+            if (node2 == null || (node1 != null && node1.Degree < node2.Degree))
             {
                 return node1;
             }
             return node2;
         }
 
-        public static BinomialHeap BinomialHeapMerge(BinomialHeap heap1, BinomialHeap heap2)
+        public BinomialHeap BinomialHeapMerge(BinomialHeap other)
         {
-            BTNode? node1 = heap1.root;
-            BTNode? node2 = heap2.root;
-            BTNode? tempNode = null;
-            BTNode? minNode = MinNodeDegree(node1, node2);
+            BHNode? node1 = Root;
+            BHNode? node2 = other.Root;
+            BHNode? tempNode;
+            BHNode? minNode = MinNodeDegree(node1, node2);
 
             BinomialHeap newHeap = new();
 
@@ -58,132 +57,135 @@ namespace ukoly
             }
             while (node1 != null)
             {
-                if (node1.sibling == null) 
+                if (node1.Sibling == null) 
                 {
-                    node1.sibling = node2;
+                    node1.Sibling = node2;
                     break;
                 }
                 if (node2 == null )
                 {
                     break;
                 }
-                if (node1.sibling.degree > node2.degree)
+                if (node1.Sibling.Degree > node2.Degree)
                 {
                     tempNode = node2;
-                    node2 = node1.sibling;
-                    node1.sibling = tempNode;
+                    node2 = node1.Sibling;
+                    node1.Sibling = tempNode;
                 }
-                node1 = node1.sibling;
+                node1 = node1.Sibling;
             }
-            newHeap.root = minNode;
+            newHeap.Root = minNode;
             return newHeap;
         }
 
-        public BinomialHeap BinomialHeapUnion(BinomialHeap other) => BinomialHeapUnion(this, other);
-        public static BinomialHeap BinomialHeapUnion(BinomialHeap heap1, BinomialHeap heap2)
+        public BinomialHeap BinomialHeapUnion(BinomialHeap other)
         {
-            BinomialHeap? newHeap = BinomialHeapMerge(heap1, heap2);
+            BinomialHeap? newHeap = BinomialHeapMerge(other);
 
-            if (newHeap.root == null) return newHeap;
+            if (newHeap.Root == null) return newHeap;
 
-            BTNode? prevNode = null;
-            BTNode node = newHeap.root;
-            BTNode? nextNode = node.sibling;
+            BHNode? prevNode = null;
+            BHNode node = newHeap.Root;
+            BHNode? nextNode = node.Sibling;
 
             while (nextNode != null)
             {
-                if (node.degree != nextNode.degree || (nextNode.sibling != null && nextNode.sibling.degree == node.degree))
+                if (node.Degree != nextNode.Degree || (nextNode.Sibling != null && nextNode.Sibling.Degree == node.Degree))
                 {
                     prevNode = node;
                     node = nextNode;
                 }
                 else
                 {
-                    if (node.key <= nextNode.key)
+                    if (node.Key <= nextNode.Key)
                     {
-                        node.sibling = nextNode.sibling;
+                        node.Sibling = nextNode.Sibling;
                         BinomialLink(nextNode, node);
                     }
                     else
                     {
                         if (prevNode == null)
                         {
-                            newHeap.root = nextNode;
+                            newHeap.Root = nextNode;
                         }
                         else
                         {
-                            prevNode.sibling = nextNode;
+                            prevNode.Sibling = nextNode;
                         }
                         BinomialLink(node, nextNode);
-                        newHeap.root = nextNode;
+                        node = nextNode;
                     }
                 }
-                nextNode = node.sibling;
+                nextNode = node.Sibling;
             }
+
             return newHeap;
         }
-        public void BinomialHeapInsert(int key) => BinomialHeapInsert(this, new BTNode(key, 0));
-        public static void BinomialHeapInsert(BinomialHeap heap, BTNode node)
+
+        public void BinomialHeapInsertKey(int key) => BinomialHeapInsert(new BHNode(key));
+        public void BinomialHeapInsert( BHNode node)
         {
-            BinomialHeap newHeap = new BinomialHeap();
-            node.parent = null;
-            node.sibling = null;
-            node.child = null;
-            node.degree = 0;
-            newHeap.root = node;
-            //
-            heap.root = BinomialHeapUnion(heap, newHeap).root;
+            BinomialHeap newHeap = new();
+            node.Parent = null;
+            node.Sibling = null;
+            node.Child = null;
+            newHeap.Root = node;
+
+            Root = BinomialHeapUnion(newHeap).Root;
         }
 
-        public int? BinomialHeapExtractMinKey() => BinomialHeapExtractMin(this)?.key;
-        public static BTNode? BinomialHeapExtractMin(BinomialHeap heap)
+        public int? BinomialHeapExtractMinKey() => BinomialHeapExtractMin()?.Key;
+        public BHNode? BinomialHeapExtractMin()
         {
-            if (heap.root == null) return null;
-            BTNode? node = heap.root;
-            BTNode? minNode = node;
-            BTNode? prewNode = null;
-            BTNode? newNode;
-            while (node != null && node.sibling != null)
-            {
-                if (node.sibling.key < minNode?.key)
+            if (Root == null) return null;
+            BHNode? node = Root;
+            BHNode? minNode = node;
+            BHNode? prewMinNode = null;
+            BHNode? prewNode = null;
+
+            BinomialHeap newHeap = new();
+            
+            BHNode? nextNode;
+
+            while (node != null)
+            { 
+                if (minNode.Key > node.Key)
                 {
-                    minNode = node.sibling;
-                    prewNode = node;
+                    prewMinNode = prewNode;
+                    minNode = node;
                 }
-                node = node.sibling;
+                prewNode = node;
+                node = node.Sibling;
             }
-            if (prewNode == null) 
+
+            if (prewMinNode == null)
             {
-                heap.root = node?.sibling;
+                Root = minNode.Sibling;
             }
             else
             {
-                prewNode.sibling = minNode?.sibling;
+                prewMinNode.Sibling = minNode.Sibling;
             }
 
-            newNode = minNode?.child;
-            if (newNode != null)
-            {
-                node = null;
-                while (newNode != null)
-                {
-                    newNode.parent = null;
-                    prewNode =  node;
-                    node = newNode;
-                    newNode = newNode.sibling;
-                    node.sibling = prewNode;
+            node = minNode.Child;
+            prewNode = null;
 
-                }
+            while (node != null)
+            {
+                node.Parent = null;
+                nextNode = node.Sibling;
+                node.Sibling = prewNode;
+                prewNode = node;
+                node = nextNode;
             }
 
-            if (heap.root == null)
-            {
-                heap.root = node;
-            }
-            else
-            {
-                BinomialHeapUnion(heap, new BinomialHeap { root = node });
-            }
+            newHeap.Root = prewNode;
+
+            Root = BinomialHeapUnion(newHeap).Root;
+
+            minNode.Degree = 0;
+            minNode.Child = null;
+            minNode.Sibling = null;
             return minNode;
         }
     }
