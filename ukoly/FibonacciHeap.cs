@@ -139,10 +139,10 @@
 
         private void Consolidate()
         {
-            FHNode xNode;
-            FHNode yNode;
-            FHNode nextNode;
-            FHNode tempNode;
+            FHNode? xNode;
+            FHNode? yNode;
+            FHNode? nextNode;
+            FHNode? tempNode;
             int degree;
 
             if (MinNode ==  null) { return; }
@@ -205,6 +205,7 @@
             for (var i = 0; i < maxDegree; i++)
             {
                 yNode = degreeArray[i];
+
                 if (yNode == null)
                 {
                     continue;
